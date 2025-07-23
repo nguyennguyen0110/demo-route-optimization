@@ -2,7 +2,7 @@ import joblib
 
 
 class FrequencyPredictor:
-    _model = joblib.load(filename='/model/best_model.joblib')
+    _model = joblib.load(filename='model/best_model.joblib')
     map_features = {
         'order_amount': 'OrdAmt', 'order_count': 'OrderCount',
         'channel_GT_100': 'Channel_GT_100', 'channel_GT_200': 'Channel_GT_200',
