@@ -37,12 +37,14 @@
 
 <main>
     <h2>cluster-customer</h2>
+    {% if not output %}
     <h3>Description:</h3>
     <p>Cluster customer into groups due to their position.</p>
     <h3>Details:</h3>
     <p>Using k-means of scikit-learn to cluster.</p>
     <h3>Note:</h3>
     <p>Support cluster up to 200 locations only.</p>
+    {% endif %}
     <h3>Demo:</h3>
     <h4>Input:</h4>
     <form method="POST">
