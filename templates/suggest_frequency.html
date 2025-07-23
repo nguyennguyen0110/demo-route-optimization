@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Nguyen Nguyen">
+    <meta name="description" content="Render html for demo of Route Optimization">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo suggest-frequency</title>
+    <link rel="icon" href="./static/images/logo.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<header>
+    <h1>Route Optimization Demo</h1>
+    <nav>
+        <ul class="menu">
+            <li class="menu_li"><a href="{{ url_for('root') }}">Home</a></li>
+            <li class="menu_li">
+                <a href="{{ url_for('optimize_route') }}">optimize-route</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('sale_route') }}">sale-route</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('check_overlap') }}">check-overlap</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('suggest_frequency') }}">suggest-frequency</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('cluster_customer') }}">cluster-customer</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>suggest-frequency</h2>
+    {% if not output %}
+    <h3>Description:</h3>
+    <p>
+        Suggest visit frequency for customer. Input information of new customer
+        for suggestion.
+    </p>
+    <h3>Details:</h3>
+    <ul>
+        <li>
+            Explore customer data, apply feature engineering and feature selection.
+        </li>
+        <li>
+            Build classification models with scikit-learn, fine-tune models, apply
+            ensemble learning. And pick the best model to serve.
+        </li>
+        <li>Input information to model and get result as suggestion.</li>
+    </ul>
+    <h3>Notes:</h3>
+    <ul>
+        <li>
+            Models are trained with dummy data for demo, and just have 60% accuracy.
+        </li>
+        <li>
+            Should let user choose visit frequency as their will. Should
+            periodically explore data, pick feature and train models again.
+        </li>
+    </ul>
+    {% endif %}
+    <h3>Demo:</h3>
+    <h4>Input:</h4>
+    <form method="POST">
+        <ul>
+            <li>
+                <label for="order_amount">order_amount: </label>
+                <input id="order_amount" type="number" name="order_amount"
+                       value="2000000">
+            </li>
+            <li>
+                <label for="order_count">order_count: </label>
+                <input id="order_count" type="number" name="order_count" value="8">
+            </li>
+            <li>
+                <label for="channel">channel: </label>
+                <select id="channel" name="channel">
+                    <option value="GT_100" selected>GT_100</option>
+                    <option value="GT_200">GT_200</option>
+                    <option value="GT_300">GT_300</option>
+                    <option value="GT_400">GT_400</option>
+                    <option value="KA_700">KA_700</option>
+                    <option value="Others">Others</option>
+                </select>
+            </li>
+            <li>
+                <label for="class_id">class_id: </label>
+                <select id="class_id" name="class_id">
+                    <option value="N2" selected>N2</option>
+                    <option value="N1">N1</option>
+                </select>
+            </li>
+            <li>
+                <label for="territory">territory: </label>
+                <select id="territory" name="territory">
+                    <option value="BTB">BTB</option>
+                    <option value="DBSCL">DBSCL</option>
+                    <option value="DNB">DNB</option>
+                    <option value="HCM" selected>HCM</option>
+                    <option value="TB">TB</option>
+                </select>
+            </li>
+            <li>
+                <label for="branch_id">branch_id: </label>
+                <select id="branch_id" name="branch_id">
+                    <option value="10000342">10000342</option>
+                    <option value="MARVAL">MARVAL</option>
+                    <option value="Others" selected>Others</option>
+                </select>
+            </li>
+            <li>
+                <label for="shop_type">shop_type: </label>
+                <select id="shop_type" name="shop_type">
+                    <option value="101" selected>101</option>
+                    <option value="102">102</option>
+                    <option value="201">201</option>
+                    <option value="305">305</option>
+                    <option value="402">402</option>
+                    <option value="Others">Others</option>
+                </select>
+            </li>
+            <li>
+                <label for="state">state: </label>
+                <select id="state" name="state">
+                    <option value="43" selected>43</option>
+                    <option value="79">79</option>
+                    <option value="80">80</option>
+                    <option value="Others">Others</option>
+                </select>
+            </li>
+        </ul>
+        <div class="form_button"> <input type="submit" value="Get result"> </div>
+    </form>
+    {% if output %}
+    <h4>Output:</h4>
+    <p>code: {{ output['code'] }}</p>
+    <p>message: {{ output['message'] }}</p>
+    <p>data: {% if output['data'] %}{{ output['data'] }}{% endif %}</p>
+    <h3>Raw JSON: </h3>
+    <h4>Input: </h4>
+    <pre class="read_tag_json">{{ raw_in }}</pre>
+    <h4>Output: </h4>
+    <pre class="read_tag_json">{{ raw_out }}</pre>
+    {% endif %}
+</main>
+
+<footer>
+    <hr>
+    <p>by: Nguyen Nguyen</p>
+    <p>nguyennta@icloud.com</p>
+    <p>(+84) 77 777 5995</p>
+    <p>
+        Portfolio:
+        <a href="https://portfolio-698202522757.asia-southeast1.run.app" target="_blank" rel="noopener noreferrer">
+            https://portfolio-698202522757.asia-southeast1.run.app
+        </a>
+    </p>
+</footer>
+</body>
+
+</html>

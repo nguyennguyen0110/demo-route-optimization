@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Nguyen Nguyen">
+    <meta name="description" content="Render html for demo of Route Optimization">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo cluster-customer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<header>
+    <h1>Route Optimization Demo</h1>
+    <nav>
+        <ul class="menu">
+            <li class="menu_li"><a href="{{ url_for('root') }}">Home</a></li>
+            <li class="menu_li">
+                <a href="{{ url_for('optimize_route') }}">optimize-route</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('sale_route') }}">sale-route</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('check_overlap') }}">check-overlap</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('suggest_frequency') }}">suggest-frequency</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('cluster_customer') }}">cluster-customer</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>cluster-customer</h2>
+    <h3>Description:</h3>
+    <p>Cluster customer into groups due to their position.</p>
+    <h3>Details:</h3>
+    <p>Using k-means of scikit-learn to cluster.</p>
+    <h3>Note:</h3>
+    <p>Support cluster up to 200 locations only.</p>
+    <h3>Demo:</h3>
+    <h4>Input:</h4>
+    <form method="POST">
+        <p>Coordinates: </p>
+        <input id="add_button" class="add_button" type="button"
+               value="Add customer location" onclick="addCustomer()">
+        <ul id="customers">
+            {% for c in d %}
+            <li>
+                Latitude: <input type="number" name="latitude" value="{{ c[0] }}">
+                Longitude: <input type="number" name="longitude" value="{{ c[1] }}">
+            </li>
+            {% endfor %}
+        </ul>
+        <p>Groups: <input type="number" name="groups" value="3"></p>
+        <div class="form_button"> <input type="submit" value="Get result"> </div>
+    </form>
+    {% if output %}
+    <h4>Output:</h4>
+    <p>code: {{ output['code'] }}</p>
+    <p>message: {{ output['message'] }}</p>
+    <p>data: {% if output['data'] %}{{ output['data'] }}{% endif %}</p>
+    <h3>Raw JSON: </h3>
+    <h4>Input: </h4>
+    <pre class="read_tag_json">{{ raw_in }}</pre>
+    <h4>Output: </h4>
+    <pre class="read_tag_json">{{ raw_out }}</pre>
+    {% endif %}
+</main>
+
+<footer>
+    <hr>
+    <p>by: Nguyen Nguyen</p>
+    <p>nguyennta@icloud.com</p>
+    <p>(+84) 77 777 5995</p>
+    <p>
+        Portfolio:
+        <a href="https://portfolio-698202522757.asia-southeast1.run.app" target="_blank" rel="noopener noreferrer">
+            https://portfolio-698202522757.asia-southeast1.run.app
+        </a>
+    </p>
+</footer>
+
+<script>
+    const customers = document.getElementById("customers");
+    const addBtn = document.getElementById("add_button");
+    let count = 11;
+
+    function addCustomer() {
+        if (count >= 30) {
+            return;
+        }
+        // Create elements and setup
+        const newCustomer = document.createElement("li");
+        const latitude = document.createElement("input");
+        latitude.type = "number";
+        latitude.name = "latitude";
+        const longitude = document.createElement("input");
+        longitude.type = "number";
+        longitude.name = "longitude";
+        const latText = document.createTextNode("Latitude: ");
+        const longText = document.createTextNode(" Longitude: ");
+        // Add elements
+        newCustomer.appendChild(latText);
+        newCustomer.appendChild(latitude);
+        newCustomer.appendChild(longText);
+        newCustomer.appendChild(longitude);
+        customers.appendChild(newCustomer);
+        // Add count
+        count++;
+        // Hide the button if limit reached
+        if (count >= 30) {
+            addBtn.style.display = "none";
+        }
+    }
+</script>
+
+
+
+</body>
+
+</html>

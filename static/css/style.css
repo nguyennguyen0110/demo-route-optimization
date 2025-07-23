@@ -1,0 +1,123 @@
+body {
+    background: black;
+    color: white;
+}
+
+footer {
+    margin: 3em 0 3em 0;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+h3 {
+    margin-top: 3em;
+}
+
+p {
+    text-indent: 2em;
+}
+
+a {
+    text-decoration: none;
+    color: rgb(120, 150, 255);
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+li {
+    margin: 0.4em;
+}
+
+form {
+    border: 0.1em solid white;
+    border-radius: 1em;
+    width: 90%;
+    max-width: 50em;
+    padding: 1em;
+    margin: auto;
+}
+
+table, th, td {
+    border: 0.1em solid white;
+    border-collapse: collapse;
+    padding: 0.2em 0.5em;
+}
+
+th {
+    text-align: center;
+}
+
+td {
+    text-align: right;
+}
+
+input {
+    margin: 0.2em;
+}
+
+td>input {
+    width: 100%;
+}
+
+.menu {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    background: red;
+    height: auto;
+    align-items: center;
+}
+
+.menu>li {
+    margin: 1em;
+}
+
+.menu_li>a {
+    text-decoration: none;
+    color: white;
+}
+
+.menu_li>a:hover {
+    text-decoration: underline;
+}
+
+.default_photo {
+  text-align: center;
+  margin-top: 2em;
+}
+
+.default_photo>img {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 0.5em;
+}
+
+.form_button {
+    text-align: center;
+}
+
+.form_button input {
+    height: 2.5em;
+    width: 10em;
+    background-color: pink;
+    border-radius: 0.5em;
+}
+
+.read_tag_json {
+    background-color: #202020;
+    padding: 1em;
+    color: white;
+    border-radius: 1em;
+    white-space: pre;
+    overflow-x: auto;
+    display: inline-block;
+    max-width: 100vw;
+}
+
+.add_button {
+    background-color: pink;
+}

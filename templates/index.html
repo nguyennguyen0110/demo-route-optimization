@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Nguyen Nguyen">
+    <meta name="description" content="Render html for demo of Route Optimization">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimization Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<header>
+    <h1>Demo Route Optimization</h1>
+    <nav>
+        <ul class="menu">
+            <li class="menu_li"><a href="{{ url_for('root') }}">Home</a></li>
+            <li class="menu_li">
+                <a href="{{ url_for('optimize_route') }}">optimize-route</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('sale_route') }}">sale-route</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('check_overlap') }}">check-overlap</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('suggest_frequency') }}">suggest-frequency</a>
+            </li>
+            <li class="menu_li">
+                <a href="{{ url_for('cluster_customer') }}">cluster-customer</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h3>Description:</h3>
+    <p>This page is used for demo of Route Optimization project.</p>
+    <h3>NOTE:</h3>
+    <ul>
+        <li>
+            This page ONLY for demo, not APIs. Do not copy these demo page addresses
+            as APIs. Read API document for more details.
+        </li>
+        <li>
+            <a href="https://github.com/nguyennguyen0110/demo-route-optimization"
+               target="_blank" rel="noopener noreferrer">
+                Link to source code
+            </a>
+        </li>
+    </ul>
+    <h3>Current APIs:</h3>
+    <ol>
+        <li>
+            <a href="{{ url_for('optimize_route') }}">/optimize-route: </a>optimize
+            visit order to get the shortest route begin from depot (distributor)
+            through locations (customers) and turn back to depot.
+        </li>
+        <li>
+            <a href="{{ url_for('sale_route') }}">/sale-route: </a>optimize visit
+            order to get the fastest route, support time window configuration for
+            locations.
+        </li>
+        <li>
+            <a href="{{ url_for('check_overlap') }}">/check-overlap: </a>check for
+            overlap routes.
+        </li>
+        <li>
+            <a href="{{ url_for('suggest_frequency') }}">/suggest-frequency: </a>
+            suggest visit frequency for a customer base on their information from
+            database, or input their (estimated) information if new.
+        </li>
+        <li>
+            <a href="{{ url_for('cluster_customer') }}">/cluster-customer: </a>
+            cluster customer into groups base on their position.
+        </li>
+        <li>
+            <a href="">/check-ddo: </a>(removed in this demo) query sales route and
+            check if their distance, duration are too short/long or visit order are
+            not optimized.
+        </li>
+        <li>
+            <a href="">/check-frequency: </a>(removed in this demo) query customer
+            and check if they bought too much/less than others with same visit
+            frequency.
+        </li>
+    </ol>
+</main>
+
+<footer>
+    <hr>
+    <p>by: Nguyen Nguyen</p>
+    <p>nguyennta@icloud.com</p>
+    <p>(+84) 77 777 5995</p>
+    <p>
+        Portfolio:
+        <a href="https://portfolio-698202522757.asia-southeast1.run.app"
+           target="_blank" rel="noopener noreferrer">
+            https://portfolio-698202522757.asia-southeast1.run.app
+        </a>
+    </p>
+</footer>
+</body>
+
+</html>
