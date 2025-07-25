@@ -51,6 +51,7 @@ and deployed via Cloud Run — both part of Google Cloud Platform (GCP).
 
 
 ## Feature:  
+**NOTE: ** add "/api" before each. Example: "/api/optimize-route".
 1. **"/optimize-route":** Optimize visit order of a route.  
 2. **"/sale-route":** Optimize visit order with time window for location(s).
 3. **"/check-overlap":** Check for overlapping routes. 
@@ -64,6 +65,7 @@ with other customers who has the same visit frequency (removed in this demo).
 
 
 ## Details
+**NOTE: ** add "/api" before each. Example: "/api/optimize-route".
 1. POST at "/optimize-route":    
     1. Request:
         - Content type "application/json":
