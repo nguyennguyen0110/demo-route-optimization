@@ -21,7 +21,7 @@ def validate_input(num_loc, distances, durations, working_limit, search_time,
     """
     if num_loc < 2:
         return 'Must have depot and at least 1 more location'
-    if num_loc != len(distances) != len(durations):
+    if not (num_loc == len(distances) == len(durations)):
         return 'Length of locations, distances and durations must be same'
     for d in distances:
         if len(d) != num_loc:
