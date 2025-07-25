@@ -18,7 +18,8 @@ def cluster_by_position(coordinates, groups):
     try:
         arr = np.array(coordinates, dtype=np.float64)
     except (ValueError, TypeError):
-        return {'code': 400, 'message': 'Lat-Long must be float', 'data': []}
+        mes = 'coordinates must be float and in pairs [lat, long]'
+        return {'code': 400, 'message': mes, 'data': []}
     if arr.ndim != 2 or arr.shape[1] != 2:
         mes = 'coordinates must be pairs [lat, long]'
         return {'code': 400, 'message': mes, 'data': []}

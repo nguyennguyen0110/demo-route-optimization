@@ -391,7 +391,7 @@ def check_overlap(names, routes):
         try:
             arr = np.array(routes[i], dtype=np.float64)
         except (ValueError, TypeError):
-            mes = f'{names[i]}: all coordinates must be float'
+            mes = f'{names[i]}: all coordinates must be float and in pairs [lat, long]'
             return {'code': 400, 'message': mes, 'data': []}
         if arr.ndim != 2 or arr.shape[1] != 2:
             mes = f'{names[i]}: coordinates must be pairs [lat, long]'
