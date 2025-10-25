@@ -35,7 +35,5 @@ def suggest_frequency(info):
     df = pd.DataFrame(data, index=[0])
     # Make sure our columns in right order and needed only
     df = df[Predictor.all_columns]
-    # Rename columns
-    df = df.rename(columns=Predictor.map_features)
     frequency = Predictor.suggest(df)
     return {'code': 200, 'message': f'Success', 'data': frequency[0]}

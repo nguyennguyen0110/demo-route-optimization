@@ -193,7 +193,7 @@ with other customers who has the same visit frequency (removed in this demo).
     3. In real project:
         - Check DB for optimized route (within 28 days) and return if already had it.
         - Else call GG Route API for distance, duration between locations to make
-        matrices. Optimize the route using OR Tolls.
+        matrices. Optimize the route using OR Tools.
         - Save optimized route, distances, durations to DB for future use.
     4. In this demo:
         - Input the distances and durations matrices and use OR Tools to optimize
@@ -243,13 +243,12 @@ with other customers who has the same visit frequency (removed in this demo).
                     "order_amount": average revenue each month,
                     "order_count": average orders each month,
                     "channel": sell channel ("GT_100", "GT_200", "GT_300",
-                               "GT_400", "KA_700", "Others"),
-                    "class_id": shop class ("N1", "N2"),
-                    "territory": territory ("BTB", "DBSCL", "DNB", "HCM", "TB"),
-                    "branch_id": distributor ID ("10000342", "MARVAL", "Others"),
-                    "shop_type": shop type ("101", "102", "201", "305",
-                                 "402", "Others"),
-                    "state": state ("43", "79", "80", "Others"),
+                               "GT_400", "others"),
+                    "class": shop class ("N1", "N2"),
+                    "branch": distributor ID ("10000342", "MARVAL", "NPP01", "others"),
+                    "type": shop type ("101", "201", "305",
+                                 "402", "others"),
+                    "state": state ("43", "79", "80", "others"),
                 }
         - "order_amount" and "order_count" is numeric.
         - Other fields is string and must contain one of the values above.
