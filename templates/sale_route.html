@@ -1,327 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="author" content="Nguyen Nguyen">
-    <meta name="description" content="Render html for demo of Route Optimization">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo sale-route</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block title %}Demo sale-route{% endblock %}
 
-<body>
-<header>
-    <h1>Route Optimization Demo</h1>
-    <nav>
-        <ul class="menu">
-            <li class="menu_li"><a href="{{ url_for('root') }}">Home</a></li>
-            <li class="menu_li">
-                <a href="{{ url_for('optimize_route') }}">optimize-route</a>
+{% block content %}
+
+<h2>sale-route</h2>
+{% if not output %}
+<h3>Description:</h3>
+<p>
+    Optimize visit order to get the fastest route begin at depot (distributor) through locations (customers)
+    and return to depot. Support time window configuration for locations. Example: need to visit customer A
+    from 10:00AM to 11:00AM.
+</p>
+<h3>Details:</h3>
+<ul>
+    <li>
+        In real project:
+        <ul>
+            <li>
+                Check database and return result if we already had optimized this route within 28 days.
             </li>
-            <li class="menu_li">
-                <a href="{{ url_for('sale_route') }}">sale-route</a>
-            </li>
-            <li class="menu_li">
-                <a href="{{ url_for('check_overlap') }}">check-overlap</a>
-            </li>
-            <li class="menu_li">
-                <a href="{{ url_for('suggest_frequency') }}">suggest-frequency</a>
-            </li>
-            <li class="menu_li">
-                <a href="{{ url_for('cluster_customer') }}">cluster-customer</a>
+            <li>
+                Else: Get distance, duration from GG Route API then create time matrix, distance matrix
+                between locations (include depot). Use OR Tools to optimize route.
             </li>
         </ul>
-    </nav>
-</header>
-
-<main>
-    <h2>sale-route</h2>
-    {% if not output %}
-    <h3>Description:</h3>
-    <p>
-        Optimize visit order to get the fastest route begin at depot (distributor)
-        through locations (customers) and return to depot. Support time window
-        configuration for locations. Example: need to visit customer A from 10:00AM
-        to 11:00AM.
-    </p>
-    <h3>Details:</h3>
+    </li>
+    <li>
+        In this demo: input time windows, the distances and durations matrices
+        and use OR Tools to optimize the route.
+    </li>
+</ul>
+<h3>Note:</h3>
+<ul>
+    <li>This demo just optimize maximum 15 locations (include depot).</li>
+    <li>Depot must be the last location in list.</li>
+    <li>Must have time windows for all locations and exclude depot.</li>
+    <li>Time window may be empty list for locations do not need.</li>
+    <li>Time window at a location must not overlap lunchtime.</li>
+    <li>Time window cannot sooner than start time.</li>
+    <li>
+        Durations and distances must be int and not less than 0. For this demo page, if it cannot be
+        converted to int, it will be omitted. Then an error about matrix length will be raised.
+    </li>
+    <li>
+        If start time and lunch start are sent, they must in format 'hh:mm'.
+    </li>
+    <li>
+        If lunch break, waiting time, visit duration, working time, search time
+        and number of vehicles are sent, they must be int and greater than 0.
+    </li>
+    <li>Optimize sale route for a day, so time limits at "23:59".</li>
+</ul>
+{% endif %}
+<h3>Demo:</h3>
+<h4>Input:</h4>
+<form method="POST">
+    <p>Locations:</p>
     <ul>
-        <li>
-            In real project:
-            <ul>
-                <li>
-                    Check database and return result if we already had optimized
-                    this route within 28 days.
-                </li>
-                <li>
-                    Else: Get distance, duration from GG Route API then create time
-                    matrix, distance matrix between locations (include depot). Use
-                    OR Tools to optimize route.
-                </li>
-            </ul>
-        </li>
-        <li>
-            In this demo: input time windows, the distances and durations matrices
-            and use OR Tools to optimize the route.
-        </li>
+        {% for loc in d['loc'] %}
+        <li>{{ loc }}: <input type="text" name="locations" value="{{ loc }}"></li>
+        {% endfor %}
     </ul>
-    <h3>Note:</h3>
+    <p>Time window:</p>
     <ul>
-        <li>This demo just optimize maximum 15 locations (include depot).</li>
-        <li>Depot must be the last location in list.</li>
-        <li>Must have time windows for all locations and exclude depot.</li>
-        <li>Time window may be empty list for locations do not need.</li>
-        <li>Time window at a location must not overlap lunchtime.</li>
-        <li>Time window cannot sooner than start time.</li>
+        {% for i in range(d['loc']|length - 1) %}
         <li>
-            Durations and distances must be int and not less than 0. For this demo
-            page, if it cannot be converted to int, it  will be omitted. Then an
-            error about matrix length will be raised.
-        </li>
-        <li>
-            If start time and lunch start are sent, they must in format 'hh:mm'.
-        </li>
-        <li>
-            If lunch break, waiting time, visit duration, working time, search time
-            and number of vehicles are sent, they must be int and greater than 0.
-        </li>
-        <li>Optimize sale route for a day, so time limits at "23:59".</li>
-    </ul>
-    {% endif %}
-    <h3>Demo:</h3>
-    <h4>Input:</h4>
-    <form method="POST">
-        <p>Locations:</p>
-        <ul>
-            {% for loc in d['loc'] %}
-            <li>
-                {{ loc }}: <input type="text" name="locations" value="{{ loc }}">
-            </li>
-            {% endfor %}
-        </ul>
-        <p>Time window:</p>
-        <ul>
-            {% for i in range(d['loc']|length - 1) %}
-            <li>
-                {{ d['loc'][i] }}:
-                from <input type="text" name="from_time" placeholder="hh:mm">
-                to <input type="text" name="to_time" placeholder="hh:mm">
-            </li>
-            {% endfor %}
-        </ul>
-        <p>Distances (in meters):</p>
-        <table>
-            <thead>
-            <tr>
-                <th></th>
-                <th>A</th>
-                <th>B</th>
-                <th>C</th>
-                <th>D</th>
-                <th>E</th>
-                <th>Depot</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for i in range(d['loc']|length) %}
-            <tr>
-                <td>{{d['loc'][i]}}</td>
-                <td>
-                    <input type="number" name="{{ d['di_n'][i] }}"
-                           value="{{ d['di_v'][i][0] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['di_n'][i] }}"
-                           value="{{ d['di_v'][i][1] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['di_n'][i] }}"
-                           value="{{ d['di_v'][i][2] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['di_n'][i] }}"
-                           value="{{ d['di_v'][i][3] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['di_n'][i] }}"
-                           value="{{ d['di_v'][i][4] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['di_n'][i] }}"
-                           value="{{ d['di_v'][i][5] }}">
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <p>Duration (in minutes):</p>
-        <table>
-            <thead>
-            <tr>
-                <th></th>
-                <th>A</th>
-                <th>B</th>
-                <th>C</th>
-                <th>D</th>
-                <th>E</th>
-                <th>Depot</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for i in range(d['loc']|length) %}
-            <tr>
-                <td>{{d['loc'][i]}}</td>
-                <td>
-                    <input type="number" name="{{ d['du_n'][i] }}"
-                           value="{{ d['du_v'][i][0] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['du_n'][i] }}"
-                           value="{{ d['du_v'][i][1] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['du_n'][i] }}"
-                           value="{{ d['du_v'][i][2] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['du_n'][i] }}"
-                           value="{{ d['du_v'][i][3] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['du_n'][i] }}"
-                           value="{{ d['du_v'][i][4] }}">
-                </td>
-                <td>
-                    <input type="number" name="{{ d['du_n'][i] }}"
-                           value="{{ d['du_v'][i][5] }}">
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <p>
-            Optional parameters:
-            <input id="optional" type="checkbox" name="optional" value="Y">
-            <label for="optional">Send optionals</label>
-        </p>
-        <ul>
-            <li>
-                <label for="start_time">Start time: </label>
-                <input id="start_time" type="text" name="start_time" value="08:30">
-            </li>
-            <li>
-                <label for="lunch_start">Lunch start: </label>
-                <input id="lunch_start" type="text" name="lunch_start"
-                       value="12:00">
-            </li>
-            <li>
-                <label for="lunch_break">Lunch break: </label>
-                <input id="lunch_break" type="number" name="lunch_break" value="60">
-            </li>
-            <li>
-                <label for="waiting_time">Waiting time: </label>
-                <input id="waiting_time" type="number" name="waiting_time"
-                       value="5">
-            </li>
-            <li>
-                <label for="visit_duration">Visit duration: </label>
-                <input id="visit_duration" type="number"
-                       name="visit_duration" value="10">
-            </li>
-            <li>
-                <label for="working_time">Working time: </label>
-                <input id="working_time"
-                       type="number" name="working_time" value="720">
-            </li>
-            <li>
-                <label for="search_time">Search time: </label>
-                <input id="search_time" type="number" name="search_time" value="3">
-            </li>
-            <li>
-                <label for="num_vehicles">Number of vehicles: </label>
-                <input id="num_vehicles" type="number" name="num_vehicles"
-                       value="1">
-            </li>
-        </ul>
-        <div class="form_button"> <input type="submit" value="Get result"> </div>
-    </form>
-    {% if output %}
-    <h4>Output:</h4>
-    <p>code: {{ output['code'] }}</p>
-    <p>message: {{ output['message'] }}</p>
-    <p>data:</p>
-    <ul>
-        {% for v in output['data'] %}
-        <li>
-            Vehicle {{ loop.index0 }}:
-            <ul>
-                <li>
-                    Visit order:
-                    <ul>
-                        {% for i in range(v['route']|length) %}
-                        <li>
-                            {{ v['route'][i] }}:
-                            from {{ v['visit_times'][i][0] }}
-                            to {{ v['visit_times'][i][1] }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-                <li>
-                    Lunchtime: from {{ v['lunch_time'][0] }}
-                    to {{ v['lunch_time'][1] }}
-                </li>
-                <li>Total distance: {{ '{:,}'.format(v['total_distance']) }}</li>
-                <li>Total duration: {{ '{:,}'.format(v['total_duration']) }}</li>
-                <li>
-                    Legs:
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Leg</th>
-                            <th>Distance</th>
-                            <th>Duration</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in range(v['durations']|length) %}
-                        <tr>
-                            <td>{{ i }}</td>
-                            <td>{{ v['route'][i] + ' => ' + v['route'][i+1] }}</td>
-                            <td>{{ '{:,}'.format(v["distances"][i]) }}</td>
-                            <td>{{ '{:,}'.format(v["durations"][i]) }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </li>
-            </ul>
+            {{ d['loc'][i] }}:
+            from <input type="text" name="from_time" placeholder="hh:mm">
+            to <input type="text" name="to_time" placeholder="hh:mm">
         </li>
         {% endfor %}
     </ul>
-    <h3>Raw JSON: </h3>
-    <h4>Input: </h4>
-    <pre class="read_tag_json">{{ raw_in }}</pre>
-    <h4>Output: </h4>
-    <pre class="read_tag_json">{{ raw_out }}</pre>
-    {% endif %}
-</main>
-
-<footer>
-    <hr>
-    <p>by: Nguyen Nguyen</p>
-    <p>nguyennta@icloud.com</p>
-    <p>(+84) 77 777 5995</p>
+    <p>Distances (in meters):</p>
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+            <th>D</th>
+            <th>E</th>
+            <th>Depot</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in range(d['loc']|length) %}
+        <tr>
+            <td>{{d['loc'][i]}}</td>
+            <td><input type="number" name="{{ d['di_n'][i] }}" value="{{ d['di_v'][i][0] }}"></td>
+            <td><input type="number" name="{{ d['di_n'][i] }}" value="{{ d['di_v'][i][1] }}"></td>
+            <td><input type="number" name="{{ d['di_n'][i] }}" value="{{ d['di_v'][i][2] }}"></td>
+            <td><input type="number" name="{{ d['di_n'][i] }}" value="{{ d['di_v'][i][3] }}"></td>
+            <td><input type="number" name="{{ d['di_n'][i] }}" value="{{ d['di_v'][i][4] }}"></td>
+            <td><input type="number" name="{{ d['di_n'][i] }}" value="{{ d['di_v'][i][5] }}"></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p>Duration (in minutes):</p>
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+            <th>D</th>
+            <th>E</th>
+            <th>Depot</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in range(d['loc']|length) %}
+        <tr>
+            <td>{{d['loc'][i]}}</td>
+            <td><input type="number" name="{{ d['du_n'][i] }}" value="{{ d['du_v'][i][0] }}"></td>
+            <td><input type="number" name="{{ d['du_n'][i] }}" value="{{ d['du_v'][i][1] }}"></td>
+            <td><input type="number" name="{{ d['du_n'][i] }}" value="{{ d['du_v'][i][2] }}"></td>
+            <td><input type="number" name="{{ d['du_n'][i] }}" value="{{ d['du_v'][i][3] }}"></td>
+            <td><input type="number" name="{{ d['du_n'][i] }}" value="{{ d['du_v'][i][4] }}"></td>
+            <td><input type="number" name="{{ d['du_n'][i] }}" value="{{ d['du_v'][i][5] }}"></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
     <p>
-        Portfolio:
-        <a href="https://portfolio-698202522757.asia-southeast1.run.app"
-           target="_blank" rel="noopener noreferrer">
-            https://portfolio-698202522757.asia-southeast1.run.app
-        </a>
+        Optional parameters:
+        <input id="optional" type="checkbox" name="optional" value="Y">
+        <label for="optional">Send optionals</label>
     </p>
-</footer>
-</body>
+    <ul>
+        <li>
+            <label for="start_time">Start time: </label>
+            <input id="start_time" type="text" name="start_time" value="08:30">
+        </li>
+        <li>
+            <label for="lunch_start">Lunch start: </label>
+            <input id="lunch_start" type="text" name="lunch_start" value="12:00">
+        </li>
+        <li>
+            <label for="lunch_break">Lunch break: </label>
+            <input id="lunch_break" type="number" name="lunch_break" value="60">
+        </li>
+        <li>
+            <label for="waiting_time">Waiting time: </label>
+            <input id="waiting_time" type="number" name="waiting_time" value="5">
+        </li>
+        <li>
+            <label for="visit_duration">Visit duration: </label>
+            <input id="visit_duration" type="number" name="visit_duration" value="10">
+        </li>
+        <li>
+            <label for="working_time">Working time: </label>
+            <input id="working_time" type="number" name="working_time" value="720">
+        </li>
+        <li>
+            <label for="search_time">Search time: </label>
+            <input id="search_time" type="number" name="search_time" value="3">
+        </li>
+        <li>
+            <label for="num_vehicles">Number of vehicles: </label>
+            <input id="num_vehicles" type="number" name="num_vehicles" value="1">
+        </li>
+    </ul>
+    <div class="form_button"><input type="submit" value="Get result"></div>
+</form>
+{% if output %}
+<h4>Output:</h4>
+<p>code: {{ output['code'] }}</p>
+<p>message: {{ output['message'] }}</p>
+<p>data:</p>
+<ul>
+    {% for v in output['data'] %}
+    <li>
+        Vehicle {{ loop.index0 }}:
+        <ul>
+            <li>
+                Visit order:
+                <ul>
+                    {% for i in range(v['route']|length) %}
+                    <li>
+                        {{ v['route'][i] }}: from {{ v['visit_times'][i][0] }} to {{ v['visit_times'][i][1] }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Lunchtime: from {{ v['lunch_time'][0] }} to {{ v['lunch_time'][1] }}</li>
+            <li>Total distance: {{ '{:,}'.format(v['total_distance']) }}</li>
+            <li>Total duration: {{ '{:,}'.format(v['total_duration']) }}</li>
+            <li>
+                Legs:
+                <table>
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Leg</th>
+                        <th>Distance</th>
+                        <th>Duration</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in range(v['durations']|length) %}
+                    <tr>
+                        <td>{{ i }}</td>
+                        <td>{{ v['route'][i] + ' => ' + v['route'][i+1] }}</td>
+                        <td>{{ '{:,}'.format(v["distances"][i]) }}</td>
+                        <td>{{ '{:,}'.format(v["durations"][i]) }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </li>
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+<h3>Raw JSON: </h3>
+<h4>Input: </h4>
+<pre class="read_tag_json">{{ raw_in }}</pre>
+<h4>Output: </h4>
+<pre class="read_tag_json">{{ raw_out }}</pre>
+{% endif %}
 
-</html>
+{% endblock %}

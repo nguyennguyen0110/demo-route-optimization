@@ -1,4 +1,4 @@
-body {
+.dark-mode {
     background: black;
     color: white;
 }
@@ -33,7 +33,7 @@ li {
 }
 
 form {
-    border: 0.1em solid white;
+    border: 0.1em solid;
     border-radius: 1em;
     width: 90%;
     max-width: 50em;
@@ -42,7 +42,7 @@ form {
 }
 
 table, th, td {
-    border: 0.1em solid white;
+    border: 0.1em solid;
     border-collapse: collapse;
     padding: 0.2em 0.5em;
 }

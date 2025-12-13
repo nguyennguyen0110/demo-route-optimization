@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Nguyen Nguyen">
+    <meta name="description" content="Render html for demo of Route Optimization">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Route Optimization Demo{% endblock %}</title>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<header>
+    <h1>Route Optimization Demo</h1>
+    <nav>
+        <ul class="menu">
+            <li class="menu_li"><a href="{{ url_for('root') }}">Home</a></li>
+            <li class="menu_li"><a href="{{ url_for('optimize_route') }}">optimize-route</a></li>
+            <li class="menu_li"><a href="{{ url_for('sale_route') }}">sale-route</a></li>
+            <li class="menu_li"><a href="{{ url_for('check_overlap') }}">check-overlap</a></li>
+            <li class="menu_li"><a href="{{ url_for('suggest_frequency') }}">suggest-frequency</a></li>
+            <li class="menu_li"><a href="{{ url_for('cluster_customer') }}">cluster-customer</a></li>
+        </ul>
+    </nav>
+
+    <div style="clear: both;"></div>
+
+    <div class="preferences-bar">
+        <!-- Theme selector -->
+        <div class="preferences-left">
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+
+        <!-- Language selector -->
+    </div>
+</header>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    <hr>
+    <p>by: Nguyen Nguyen</p>
+    <p>nguyennta@icloud.com</p>
+    <p>(+84) 77 777 5995</p>
+    <p>
+        Portfolio:
+        <a href="https://portfolio-698202522757.asia-southeast1.run.app" target="_blank" rel="noopener noreferrer">
+            https://portfolio-698202522757.asia-southeast1.run.app
+        </a>
+    </p>
+</footer>
+</body>
+
+</html>
