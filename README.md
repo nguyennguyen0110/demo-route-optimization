@@ -45,9 +45,8 @@ This is a demo project for portfolio page.
 
 ## Project status
 - Finished.
-- Current host: https://demo-route-optimization-698202522757.asia-southeast1.run.app
-- This project’s source code is hosted on GitHub, with CI/CD handled by Cloud Build 
-and deployed via Cloud Run — both part of Google Cloud Platform (GCP).
+- Current host: localhost
+- This project’s source code is hosted on GitHub.
 
 
 ## Feature:  
@@ -57,11 +56,6 @@ and deployed via Cloud Run — both part of Google Cloud Platform (GCP).
 3. **"/check-overlap":** Check for overlapping routes. 
 4. **"/suggest-frequency":** Suggest visit frequency for new customer.  
 5. **"/cluster-customer":** Cluster customers base on their geography locations.
-6. **"/check-ddo":** Check route (ddo - distance, duration, order), warning if 
-it's distance, duration is too long/short or visit order not optimized (removed in 
-this demo).
-7. **"/check-frequency":** Check if revenue or order count is too many/less compare 
-with other customers who has the same visit frequency (removed in this demo).
 
 
 ## Details
@@ -113,16 +107,7 @@ with other customers who has the same visit frequency (removed in this demo).
         - "message": "Success" or others depend on result.
         - "data": list of optimized routes, the number of routes equal number of  
         vehicles. Data may be an empty list even code 200, check message.
-    3. In real project:
-        - Check DB for this route (get data within 28 days only), return result 
-        if already optimized.
-        - If less than 26 locations: call GG Route API for result (it supports
-        optimize for 25 intermediates at the time this project was building).
-        - From 26 locations: check DB for duration and distance information (get
-        data within 28 days only), or call GG Route API if we do not have. Then
-        create distances and durations matrices, use OR Tools to optimize the route.
-        - Save optimized route, distances, durations to DB for future use.
-    4. In this demo:
+    3. In this demo:
         - Input the distances and durations matrices and use OR Tools to optimize
         the route.
         - Just optimize maximum 15 locations (include depot).
@@ -190,16 +175,11 @@ with other customers who has the same visit frequency (removed in this demo).
         - "message": "Success" or others depend on result.
         - "data": list of optimized routes, the number of routes equal number of  
         vehicles. Data may be an empty list even code 200, check message.
-    3. In real project:
-        - Check DB for optimized route (within 28 days) and return if already had it.
-        - Else call GG Route API for distance, duration between locations to make
-        matrices. Optimize the route using OR Tools.
-        - Save optimized route, distances, durations to DB for future use.
-    4. In this demo:
+    3. In this demo:
         - Input the distances and durations matrices and use OR Tools to optimize
         the route.
         - Just optimize maximum 15 locations (include depot).
-    5. Note:
+    4. Note:
         - Time windows must not overlap lunchtime.
         - Optimize sale route for a day, so time limits at "23:59".
 
@@ -225,14 +205,10 @@ with other customers who has the same visit frequency (removed in this demo).
         - "code": 200 is success, and others similar to http code.
         - "message": "Success" or others depend on result.
         - "data": list of overlap routes (in pair).
-    3. In real project:
-        - Query DB for routes due to condition in request.
-        - Query coordinates of customer in each route.
-        - Check for overlap routes.
-    4. In this demo:
+    3. In this demo:
         - Input the coordinates in request.
         - Check for overlap routes.
-    5. Note:
+    4. Note:
         - Need at least 3 coordinates in a route.
 
 4. POST at "/suggest-frequency":
@@ -262,7 +238,7 @@ with other customers who has the same visit frequency (removed in this demo).
         - "code": 200 is success, and others similar to http code.
         - "message": "Success" or others depend on result.
         - "data": suggested frequency ("F1", "F2", ...).
-    3. In real project and this demo:
+    3. In this demo:
         - Select features base on feature engineering and BA (hand pick).
         - Build some classification models using scikit-learn, fine-tune and choose
         the best model.
@@ -293,27 +269,3 @@ with other customers who has the same visit frequency (removed in this demo).
         - "data": list of labels correspond to locations.
     3. Note:
         - Labels are numeric start with 0, 1, ...
-
-6. POST at "/check-ddo":  
-    1. Removed in this demo.
-    2. In real project:
-        - Query routes from DB.
-        - Calculate distance, duration and compare with standards.
-        - Check DB if the route is optimized, else call the optimize function.
-
-7. POST at "/check-frequency":  
-    1. Removed in this demo.
-    2. In real project:
-        - Query order history of customers who has same frequency.
-        - Calculate average range with statistic:
-            - lower = Q1 - 1.5 * IQR
-            - upper = Q3 + 1.5 * IQR
-            - IQR = Q3 - Q1
-            - Q1 = First quartile (25th percentile)
-            - Q3 = Third quartile (75th percentile)
-        - Check if avenue, orders are within the range.
-    3. Note:
-        - If DB is very large, consider calculate the average interval periodically
-        and save to DB instead of query and calculate every time.
-        - And can consider to calculate the average base on customers within the
-        same area, not all customers.
